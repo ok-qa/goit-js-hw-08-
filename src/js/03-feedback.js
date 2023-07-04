@@ -34,5 +34,5 @@ function onSubmit(evt) {
     return;
   }
   localStorage.removeItem(feedbackFormStateKey);
-  form.reset;
+
 }
