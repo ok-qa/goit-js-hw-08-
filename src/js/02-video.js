@@ -8,21 +8,20 @@ const player = new Player(iframe);
 const timeKey = 'player-current-time';
 
 const savedTime = localStorage.getItem(timeKey);
-  if (savedTime) {
-    player.setCurrentTime(savedTime);
-  }
+  
 
-
-player.on('timeupdate',throttle(saveThrottledTime) );
-
-
-function saveThrottledTime() { 
-    player.currentTime().then(function (seconds){ 
-        localStorage.setItem(timeKey, seconds);
-    })
+player.on('timeupdate', throttle(saveThrottledTime));
+function saveThrottledTime() {
+  player.getCurrentTime().then(function (seconds) {
+    localStorage.setItem(timeKey, seconds);
+  });
 }
 
 
-
+window.addEventListener('DOMContentLoaded', function () {
+  if (savedTime) {
+    player.setCurrentTime(savedTime);
+  }
+});
 
 
