@@ -33,7 +33,6 @@ function onSubmit(evt) {
     alert('Form can not be submitted with empty fields!');
     return;
   }
-  console.log(formState);
   localStorage.removeItem(feedbackFormStateKey);
   form.reset;
 }
