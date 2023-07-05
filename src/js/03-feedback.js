@@ -1,38 +1,47 @@
 import throttle from 'lodash.throttle';
+document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('.feedback-form');
+  const emailInput = document.querySelector('input[name="email"]');
+  const messageInput = document.querySelector('textarea[name="message"]');
+  const feedbackFormStateKey = 'feedback-form-state';
 
-const form = document.querySelector('.feedback-form');
-const emailInput = document.querySelector('input[name="email"]');
-const messageInput = document.querySelector('textarea[name="message"]');
-const feedbackFormStateKey = 'feedback-form-state';
+  // controlFormState();
 
-form.addEventListener('input', throttle(saveFormState, 500));
-form.addEventListener('submit', onSubmit);
-
-controlFormState();
-
-function saveFormState() {
-  const formState = {
-    email: emailInput.value,
-    message: messageInput.value,
-  };
-  localStorage.setItem(feedbackFormStateKey, JSON.stringify(formState));
-}
-
-function controlFormState() {
-  const savedFormState = localStorage.getItem(feedbackFormStateKey);
+  //check the form state
+  const savedFormState = JSON.parse(localStorage.getItem(feedbackFormStateKey));
   if (savedFormState) {
-    const formState = JSON.parse(savedFormState);
     emailInput.value = formState.email;
     messageInput.value = formState.message;
   }
-}
 
-function onSubmit(evt) {
-  evt.preventDefault();
-  if (emailInput.value.trim() === '' || messageInput.value.trim() === '') {
-    alert('Form can not be submitted with empty fields!');
-    return;
-  }
-  localStorage.removeItem(feedbackFormStateKey);
+  console.log(localStorage);
 
-}
+  //save the form state to the localStorage
+  const saveFormState = throttle(function () {
+    const currentFormState = {
+      email: emailInput.value,
+      message: messageInput.value,
+    };
+    localStorage.setItem(
+      feedbackFormStateKey,
+      JSON.stringify(currentFormState)
+    );
+  }, 500);
+
+  //add event listeners and ave the form state
+  emailInput.addEventListener('input', saveFormState);
+  messageInput.addEventListener('textarea', saveFormState);
+
+  //submit the form after submit and clear after submit
+  form.addEventListener('submit', function (onSubmit) {
+    onSubmit.preventDefault();
+    if (emailInput.value.trim() === '' || messageInput.value.trim() === '') {
+      alert('Form can not be submitted with empty fields!');
+      return;
+    }
+    console.log({ email: emailInput.value, message: messageInput.value });
+    localStorage.removeItem(feedbackFormStateKey);
+    emailInput.value = '';
+    messageInput.value = '';
+  });
+});
